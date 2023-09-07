@@ -12,13 +12,17 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    sqlite3 \
+    libsqlite3-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions and Composer
-RUN docker-php-ext-install mbstring exif pcntl bcmath gd sockets
+RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath sockets
+
+# Install Composer globally
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Create system user to run Composer and Artisan Commands
@@ -31,5 +35,12 @@ WORKDIR /var/www
 
 # Copy custom configurations PHP
 COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
+# Configure environment variables for Laravel
+ENV DB_CONNECTION=sqlite
+ENV DB_DATABASE=/var/www/database/database.sqlite
+
+# Create SQLite database directory and file within the project
+RUN mkdir -p /var/www/database && touch /var/www/database/database.sqlite
 
 USER $user
