@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\User as Model;
 use App\Repositories\AuthRepositoryInterface;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
 
 class AuthRepository implements AuthRepositoryInterface
@@ -20,15 +21,12 @@ class AuthRepository implements AuthRepositoryInterface
     return $this->model->create($data);
   }
 
-  public function login(array $data): ?object
+  public function login(array $data): object
   {
     $user = $this->model->where('email', $data['email'])->first();
-    if (!$user) {
-      return null;
-    }
 
-    if (!Hash::check($data['password'], $user->password)) {
-      return null;
+    if (!$user || !Hash::check($data['password'], $user->password)) {
+      throw new AuthenticationException('Unauthorized');
     }
 
     $user->tokens()->delete();
@@ -38,5 +36,10 @@ class AuthRepository implements AuthRepositoryInterface
     $user['token'] = $tokenResult->accessToken;
 
     return $user;
+  }
+
+  public function me(): object
+  {
+    return auth()->user();
   }
 }

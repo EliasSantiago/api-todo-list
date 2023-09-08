@@ -11,6 +11,10 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware(['auth:api'])->group(function () {
+        Route::controller(AuthController::class)->group(function () {
+            Route::get('/me', 'me')->name('me');
+        });
+
         Route::controller(ListController::class)->group(function () {
             Route::get('/lists', 'index');
             Route::get('/lists/{id}', 'show');

@@ -18,8 +18,13 @@ class AuthService
     return $this->repository->register($data);
   }
 
-  public function login(array $data): object | bool
+  public function login(array $data): object
   {
     return $this->repository->login($data);
+  }
+
+  public function me(): object
+  {
+    return $this->repository->me();
   }
 }
