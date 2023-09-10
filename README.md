@@ -1,6 +1,6 @@
-# API Vendas
+# API ToDo List
 
-API Vendas.
+API ToDo List.
 
 ## About the project
 
