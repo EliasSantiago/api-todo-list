@@ -19,8 +19,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/tasks', 'store');
             Route::get('/tasks', 'index');
             Route::get('/tasks/{id}', 'show');
-            Route::put('/tasks', 'update');
-            Route::delete('/tasks/{id}', 'destroy');
+            Route::put('/tasks/{task}', 'update')->middleware('can:update,task');
+            Route::delete('/tasks/{task}', 'destroy')->middleware('can:delete,task');
         });
     });
 });

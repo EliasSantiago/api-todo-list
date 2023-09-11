@@ -17,6 +17,23 @@ class TaskControllerTest extends TestCase
         $this->artisan('passport:install');
     }
 
+    public function test_index_returns_list_of_tasks()
+    {
+        $user = User::factory()->create();
+        Task::factory(5)->create(['user_id' => $user->id]);
+
+        $this->actingAs($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->json('GET', '/api/v1/tasks');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonCount(5, 'data');
+    }
+
     public function test_store_with_valid_params()
     {
         $user = User::factory()->create([
@@ -36,8 +53,7 @@ class TaskControllerTest extends TestCase
         $taskData = [
             'user_id'       => 1,
             'title'         => 'Planning meeting',
-            'description'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'status'        => 0,
+            'description'   => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
         ];
 
         $authenticatedResponse = $this->withHeaders([
@@ -78,7 +94,6 @@ class TaskControllerTest extends TestCase
             'user_id' => 1,
             'title' => '',
             'description' => '',
-            'status' => 999,
         ];
 
         $authenticatedResponse = $this->withHeaders([
@@ -133,12 +148,7 @@ class TaskControllerTest extends TestCase
             'Accept' => 'application/json',
         ])->json('DELETE', "/api/v1/tasks/invalid_id");
 
-        $response->assertStatus(422);
-
-        $response->assertJson([
-            'message' => 'Invalid ID',
-            'error' => 'true',
-        ]);
+        $response->assertStatus(404);
     }
 
     public function test_show_with_valid_param_for_task()
@@ -148,7 +158,6 @@ class TaskControllerTest extends TestCase
             'user_id' => $user->id,
             'title' => 'asdfasdf',
             'description' => 'asdasf',
-            'status' => 0,
         ]);
 
         $this->actingAs($user);
@@ -165,7 +174,7 @@ class TaskControllerTest extends TestCase
             'user_id' => $user->id,
             'title' => 'asdfasdf',
             'description' => 'asdasf',
-            'status' => 0,
+            'status' => 'pendente',
         ]);
     }
 
@@ -185,6 +194,71 @@ class TaskControllerTest extends TestCase
         $response->assertJson([
             'message' => 'Invalid ID',
             'error' => 'true',
+        ]);
+    }
+
+    public function test_update_with_valid_param_for_task()
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        $updatedData = [
+            'title' => 'Updated Title',
+            'description' => 'Updated Description',
+            'status' => 'pendente',
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->json('PUT', "/api/v1/tasks/{$task->id}", $updatedData);
+
+        $response->assertStatus(200);
+
+        $response->assertJson([
+            'title' => $updatedData['title'],
+            'description' => $updatedData['description'],
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'title' => $updatedData['title'],
+            'description' => $updatedData['description'],
+        ]);
+    }
+
+    public function test_update_with_invalid_param_for_task()
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        $invalidData = [
+            'title' => '',
+            'description' => 'Updated Description',
+            'status' => 'pendente',
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->json('PUT', "/api/v1/tasks/{$task->id}", $invalidData);
+
+        $response->assertStatus(422);
+        $response->assertJsonStructure(['errors']);
+        $response->assertJson(['errors' => ['title' => ['O campo título é obrigatório.']]]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'title' => $task->title,
+            'description' => $task->description,
         ]);
     }
 }

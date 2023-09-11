@@ -14,6 +14,11 @@ class TaskRepository implements TaskRepositoryInterface
     $this->model = $model;
   }
 
+  public function index(): object
+  {
+    return $this->model->paginate(20);
+  }
+
   public function store(array $data): object
   {
     return $this->model->create($data);
@@ -27,5 +32,12 @@ class TaskRepository implements TaskRepositoryInterface
   public function show(int $id): object | null 
   {
     return $this->model->find($id);
+  }
+
+  public function update(int $id, array $data): object | null
+  {
+    $task = $this->model->find($id);
+    $task->update($data);
+    return $task;
   }
 }

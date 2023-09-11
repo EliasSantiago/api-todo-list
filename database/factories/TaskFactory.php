@@ -15,7 +15,6 @@ class TaskFactory extends Factory
       'title' => $this->faker->sentence,
       'description' => $this->faker->paragraph,
       'user_id' => 1,
-      'status' => 0
     ];
   }
 }

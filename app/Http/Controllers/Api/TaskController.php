@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\SetsJsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTask;
+use App\Http\Requests\UpdateTask;
+use App\Models\Task;
+use App\Models\User;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
 
@@ -24,7 +27,15 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $tasks = $this->service->index();
+            return $this->setJsonResponse($tasks, 200);
+        } catch (\Exception $e) {
+            return $this->setJsonResponse([
+                'message' => $e->getMessage(),
+                'error'   => true
+            ], $e->getCode() ?? 500);
+        }
     }
 
     /**
@@ -71,26 +82,27 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateTask $request, Task $task)
     {
-        //
+        try {
+            $validated = $request->validated();
+            $task = $this->service->update($task->id, $validated);
+            return $this->setJsonResponse($task, 200);
+        } catch (\Exception $e) {
+            return $this->setJsonResponse([
+                'message' => $e->getMessage(),
+                'error'   => true
+            ], $e->getCode() ?? 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Task $task)
     {
         try {
-            if (empty($id) || !is_numeric($id)) {
-                $data = [
-                    'message' => 'Invalid ID',
-                    'error'   => 'true',
-                ];
-                return response($data, 422, ['Content-Type', 'application/json']);
-            }
-
-            $this->service->destroy($id);
+            $this->service->destroy($task->id);
             return response()->noContent();
         } catch (\Exception $e) {
             return $this->setJsonResponse([

@@ -14,21 +14,23 @@ class TaskService
     $this->repository = $repository;
   }
 
+  public function index(): object
+  {
+    return $this->repository->index();
+  }
+
   public function store(array $data): object
   {
     $data['user_id'] = auth()->id();
-    $data['status'] = 0;
     return $this->repository->store($data);
   }
 
   public function destroy(int $id): bool
   {
     $task = Task::find($id);
-
     if (!$task) {
-      throw new \Exception("Task not found", 404);
+      throw new \Exception("Tarefa não encontrada", 404);
     }
-
     return $this->repository->destroy($id);
   }
 
@@ -36,8 +38,17 @@ class TaskService
   {
     $task = $this->repository->show($id);
     if (!$task) {
-      throw new \Exception("Task not found", 404);
+      throw new \Exception("Tarefa não encontrada", 404);
     }
     return $task;
+  }
+
+  public function update(int $id, array $data): object | null
+  {
+    $task = Task::find($id);
+    if (!$task) {
+      throw new \Exception("Tarefa não encontrada", 404);
+    }
+    return $this->repository->update($id, $data);
   }
 }

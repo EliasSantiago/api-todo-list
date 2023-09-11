@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->string('title');
             $table->text('description');
-            $table->boolean('status')->default(false);
+            $table->enum('status', ['pendente', 'concluída'])->default('pendente');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });
