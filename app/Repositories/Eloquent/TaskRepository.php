@@ -18,4 +18,9 @@ class TaskRepository implements TaskRepositoryInterface
   {
     return $this->model->create($data);
   }
+
+  public function destroy(int $id): bool
+  {
+    return $this->model->destroy($id) > 0;
+  }
 }

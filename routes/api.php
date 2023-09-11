@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/tasks', 'index');
             Route::get('/tasks/{id}', 'show');
             Route::put('/tasks', 'update');
-            Route::delete('/tasks', 'delete');
+            Route::delete('/tasks/{id}', 'destroy');
         });
     });
 });

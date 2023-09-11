@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -94,6 +95,49 @@ class TaskControllerTest extends TestCase
         $this->assertDatabaseMissing('tasks', [
             'title' => $invalidTaskData['title'],
             'description' => $invalidTaskData['description']
+        ]);
+    }
+
+    public function test_destroy_with_valid_param_for_task()
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->json('DELETE', "/api/v1/tasks/{$task->id}");
+
+        $this->assertDatabaseMissing('tasks', [
+            'id' => $task->id,
+        ]);
+
+        $response->assertStatus(204);
+    }
+
+    public function test_destroy_with_invalid_param_for_task()
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->json('DELETE', "/api/v1/tasks/invalid_id");
+
+        $response->assertStatus(422);
+
+        $response->assertJson([
+            'message' => 'O campo ID deve ser um número',
+            'error' => 'true',
         ]);
     }
 }
