@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\SetsJsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeleteTask;
 use App\Http\Requests\StoreTask;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
@@ -41,7 +40,7 @@ class TaskController extends Controller
             return $this->setJsonResponse([
                 'message' => $e->getMessage(),
                 'error'   => true
-            ], 500);
+            ], $e->getCode() ?? 500);
         }
     }
 
@@ -50,7 +49,23 @@ class TaskController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            if (empty($id) || !is_numeric($id)) {
+                $data = [
+                    'message' => 'Invalid ID',
+                    'error'   => 'true',
+                ];
+                return response($data, 422, ['Content-Type', 'application/json']);
+            }
+
+            $task = $this->service->show($id);
+            return $this->setJsonResponse($task, 200);
+        } catch (\Exception $e) {
+            return $this->setJsonResponse([
+                'message' => $e->getMessage(),
+                'error'   => true
+            ], $e->getCode() ?? 500);
+        }
     }
 
     /**
@@ -67,12 +82,12 @@ class TaskController extends Controller
     public function destroy($id)
     {
         try {
-            if (!is_numeric($id)) {
-                $error = [
-                    'message' => 'O campo ID deve ser um número',
-                    'error'   => 'true'
+            if (empty($id) || !is_numeric($id)) {
+                $data = [
+                    'message' => 'Invalid ID',
+                    'error'   => 'true',
                 ];
-                return $this->setJsonResponse($error, 422);
+                return response($data, 422, ['Content-Type', 'application/json']);
             }
 
             $this->service->destroy($id);
@@ -81,7 +96,7 @@ class TaskController extends Controller
             return $this->setJsonResponse([
                 'message' => $e->getMessage(),
                 'error'   => true
-            ], 500);
+            ], $e->getCode() ?? 500);
         }
     }
 }

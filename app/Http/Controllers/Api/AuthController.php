@@ -31,7 +31,7 @@ class AuthController extends Controller
             return $this->setJsonResponse([
                 'message' => $e->getMessage(),
                 'error'   => true
-            ], 500);
+            ], $e->getCode() ?? 500);
         }
     }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
             return $this->setJsonResponse([
                 'message' => $e->getMessage(),
                 'error'   => true
-            ], 500);
+            ], $e->getCode() ?? 500);
         }
     }
 
@@ -58,11 +58,11 @@ class AuthController extends Controller
     {
         try {
             return $this->setJsonResponse($this->service->me());
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             return $this->setJsonResponse([
-                'message' => $th->getMessage(),
+                'message' => $e->getMessage(),
                 'error'   => true
-            ], 500);
+            ], $e->getCode() ?? 500);
         }
     }
 }

@@ -23,4 +23,9 @@ class TaskRepository implements TaskRepositoryInterface
   {
     return $this->model->destroy($id) > 0;
   }
+
+  public function show(int $id): object | null 
+  {
+    return $this->model->find($id);
+  }
 }

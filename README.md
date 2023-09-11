@@ -4,8 +4,8 @@ API ToDo List.
 
 ## About the project
 
-- Laravel 8
-- Requires PHP 7.3+
+- Laravel 10.10
+- Requires PHP >= 8.1
 - Sqlite
 
 ## How to run the api?

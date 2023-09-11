@@ -26,9 +26,18 @@ class TaskService
     $task = Task::find($id);
 
     if (!$task) {
-        throw new \Exception("Task not found", 404);
+      throw new \Exception("Task not found", 404);
     }
 
     return $this->repository->destroy($id);
+  }
+
+  public function show(int $id): object | null
+  {
+    $task = $this->repository->show($id);
+    if (!$task) {
+      throw new \Exception("Task not found", 404);
+    }
+    return $task;
   }
 }

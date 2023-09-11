@@ -136,7 +136,54 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(422);
 
         $response->assertJson([
-            'message' => 'O campo ID deve ser um número',
+            'message' => 'Invalid ID',
+            'error' => 'true',
+        ]);
+    }
+
+    public function test_show_with_valid_param_for_task()
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+            'title' => 'asdfasdf',
+            'description' => 'asdasf',
+            'status' => 0,
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->get("/api/v1/tasks/{$task->id}");
+
+        $response->assertStatus(200);
+
+        $response->assertJson([
+            'id' => $task->id,
+            'user_id' => $user->id,
+            'title' => 'asdfasdf',
+            'description' => 'asdasf',
+            'status' => 0,
+        ]);
+    }
+
+    public function test_show_with_invalid_param_for_task()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $user->createToken('auth_token')->accessToken,
+            'Accept' => 'application/json',
+        ])->get("/api/v1/tasks/invalid_id");
+
+        $response->assertStatus(422);
+
+        $response->assertJson([
+            'message' => 'Invalid ID',
             'error' => 'true',
         ]);
     }
