@@ -25,7 +25,10 @@ class AuthControllerTest extends TestCase
             'password_confirmation' => 'password123'
         ];
 
-        $response = $this->json('POST', '/api/v1/register', $userData);
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->json('POST', '/api/v1/register', $userData);
+
         $response->assertStatus(201);
 
         $response->assertJson([
@@ -41,7 +44,9 @@ class AuthControllerTest extends TestCase
 
     public function test_register_with_invalid_credentials()
     {
-        $response = $this->json('POST', '/api/v1/register', [
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->json('POST', '/api/v1/register', [
             'name' => 'John Doe',
             'email' => 'invalid-email',
             'password' => 'short',
@@ -58,7 +63,9 @@ class AuthControllerTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $response = $this->json('POST', '/api/v1/login', [
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->json('POST', '/api/v1/login', [
             'email' => 'testabc@example.com',
             'password' => 'password123',
         ]);
@@ -69,6 +76,7 @@ class AuthControllerTest extends TestCase
         $token = $response->json('token');
         $authenticatedResponse = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
         ])->json('GET', '/api/v1/me');
 
         $authenticatedResponse->assertStatus(200);
@@ -78,7 +86,9 @@ class AuthControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->json('POST', '/api/v1/login', [
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->json('POST', '/api/v1/login', [
             'email' => 'invalid@example.com',
             'password' => 'senha_incorreta',
         ]);

@@ -32,16 +32,9 @@ class TaskController extends Controller
      */
     public function store(StoreTask $request)
     {
-        try {
-            $validated = $request->validated();
-            $task = $this->service->store($validated);
-            return $this->setJsonResponse($task, 201);
-        } catch (\Exception $e) {
-            return $this->setJsonResponse([
-                'message' => $e->getMessage(),
-                'error'   => true
-            ], 500);
-        }
+        $validated = $request->validated();
+        $task = $this->service->store($validated);
+        return $this->setJsonResponse($task, 201);
     }
 
     /**

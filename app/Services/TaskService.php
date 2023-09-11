@@ -15,6 +15,8 @@ class TaskService
 
   public function store(array $data): object
   {
+    $data['user_id'] = auth()->id();
+    $data['status'] = 0;
     return $this->repository->store($data);
   }
 }
