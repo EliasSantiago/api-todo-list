@@ -23,8 +23,8 @@ class AuthService
     return $this->repository->login($data);
   }
 
-  public function me(): object
+  public function information(): object
   {
-    return $this->repository->me();
+    return $this->repository->information();
   }
 }

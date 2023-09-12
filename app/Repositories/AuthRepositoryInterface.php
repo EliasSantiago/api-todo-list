@@ -6,5 +6,5 @@ interface AuthRepositoryInterface
 {
   public function register(array $data): object | null;
   public function login(array $data): object;
-  public function me(): object;
+  public function information(): object;
 }

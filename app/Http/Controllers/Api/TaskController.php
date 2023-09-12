@@ -175,12 +175,12 @@ class TaskController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/tasks/{id}",
+     *     path="/api/v1/tasks/{idTask}",
      *     summary="Atualizar uma tarefa existente.",
      *     security={{"bearerAuth":{}}},
      *     tags={"Tasks"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="idTask",
      *         in="path",
      *         required=true,
      *         description="ID da tarefa a ser atualizada.",
@@ -198,7 +198,7 @@ class TaskController extends Controller
      *         response=200,
      *         description="Detalhes atualizados da tarefa",
      *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=10),
+     *             @OA\Property(property="idTask", type="integer", example=10),
      *             @OA\Property(property="user_id", type="integer", example=4),
      *             @OA\Property(property="title", type="string", example="abc"),
      *             @OA\Property(property="description", type="string", example="teste123"),
@@ -225,10 +225,10 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function show(string $id)
+    public function show(string $idTask)
     {
         try {
-            if (empty($id) || !is_numeric($id)) {
+            if (empty($idTask) || !is_numeric($idTask)) {
                 $data = [
                     'message' => 'Invalid ID',
                     'error'   => 'true',
@@ -236,7 +236,7 @@ class TaskController extends Controller
                 return response($data, 422, ['Content-Type', 'application/json']);
             }
 
-            $task = $this->service->show($id);
+            $task = $this->service->show($idTask);
             return $this->setJsonResponse($task, 200);
         } catch (\Exception $e) {
             return $this->setJsonResponse([
@@ -279,7 +279,7 @@ class TaskController extends Controller
      *         description="Tarefa atualizada com sucesso",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="idTask", type="integer", example=1),
      *             @OA\Property(property="user_id", type="integer", example=1),
      *             @OA\Property(property="title", type="string", example="Nova descrição da tarefa"),
      *             @OA\Property(property="description", type="string", example="Nova descrição da tarefa"),

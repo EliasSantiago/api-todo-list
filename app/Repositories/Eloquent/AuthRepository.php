@@ -5,15 +5,19 @@ namespace App\Repositories\Eloquent;
 use App\Models\User as Model;
 use App\Repositories\AuthRepositoryInterface;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Support\Facades\Hash;
+// use Illuminate\Support\Facades\Hash;
+use Hash;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AuthRepository implements AuthRepositoryInterface
 {
   private $model;
+  private $hasher;
 
-  public function __construct(Model $model)
+  public function __construct(Model $model, Hasher $hasher)
   {
     $this->model = $model;
+    $this->hasher = $hasher;
   }
 
   public function register(array $data): ?object
@@ -25,12 +29,12 @@ class AuthRepository implements AuthRepositoryInterface
   {
     $user = $this->model->where('email', $data['email'])->first();
 
-    if (!$user || !Hash::check($data['password'], $user->password)) {
+    if (!$user || !$this->hasher->check($data['password'], $user->password)) {
       throw new AuthenticationException('Unauthorized');
     }
 
     $user->tokens()->delete();
-    
+
     $tokenResult = $user->createToken('api-todo');
     $user['token_type'] = 'Bearer';
     $user['token'] = $tokenResult->accessToken;
@@ -38,7 +42,7 @@ class AuthRepository implements AuthRepositoryInterface
     return $user;
   }
 
-  public function me(): object
+  public function information(): object
   {
     return auth()->user();
   }

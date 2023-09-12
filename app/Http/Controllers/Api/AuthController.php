@@ -164,10 +164,10 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function me()
+    public function information()
     {
         try {
-            return $this->setJsonResponse($this->service->me());
+            return $this->setJsonResponse($this->service->information());
         } catch (\Exception $e) {
             return $this->setJsonResponse([
                 'message' => $e->getMessage(),

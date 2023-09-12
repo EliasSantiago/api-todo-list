@@ -33,30 +33,30 @@ class TaskService
     return $this->repository->store($data);
   }
 
-  public function destroy(int $id): bool
+  public function destroy(int $idTask): bool
   {
-    $task = Task::find($id);
+    $task = $this->repository->show($idTask);
     if (!$task) {
       throw new TaskNotFoundException('Nenhuma tarefa encontrada.');
     }
-    return $this->repository->destroy($id);
+    return $this->repository->destroy($idTask);
   }
 
-  public function show(int $id): object | null
+  public function show(int $idTask): object | null
   {
-    $task = $this->repository->show($id);
+    $task = $this->repository->show($idTask);
     if (!$task) {
       throw new \Exception("Tarefa não encontrada", 404);
     }
     return $task;
   }
 
-  public function update(int $id, array $data): object | null
+  public function update(int $idTask, array $data): object | null
   {
-    $task = Task::find($id);
+    $task = $this->repository->show($idTask);
     if (!$task) {
       throw new \Exception("Tarefa não encontrada", 404);
     }
-    return $this->repository->update($id, $data);
+    return $this->repository->update($idTask, $data);
   }
 }

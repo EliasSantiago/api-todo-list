@@ -14,10 +14,8 @@ API ToDo List.
 
 **Step 2: Create file .env**
 - cp .env.example .env
-- Set APP_URL in .env: APP_URL=localhost:8080/api/
-- Set database settings: <br>
-
-DB_CONNECTION=sqlite <br>
+- Set APP_URL in .env: APP_URL=localhost:8000/api/
+- Set database settings in .env: DB_CONNECTION=sqlite <br>
 
 **Step 3: Run docker**
 - docker-composer up -d
@@ -28,8 +26,7 @@ DB_CONNECTION=sqlite <br>
 **Step 5: Create Sqlite**
 - docker exec -it api-todo-app-1 /bin/bash
 - touch database/database.sqlite
- <br>
-To interact database with sql, run...
+- To interact database with sql, run...
 - sqlite3 /var/www/database/database.sqlite
 
 **Step 6: Generate key in .env**
@@ -45,5 +42,8 @@ To interact database with sql, run...
 - docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider
 - docker-compose exec app php artisan l5-swagger:generate
 
-** Documentation API **
+**Documentation API**
 - http://localhost:8000/api/documentation
+
+**PHP Code Analysis with Docker and PHPMD**
+- docker run -it --rm -v $(pwd):/project -w /project jakzal/phpqa phpmd app text cleancode,codesize,controversial,design,naming,unusedcode

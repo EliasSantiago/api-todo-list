@@ -24,19 +24,19 @@ class TaskRepository implements TaskRepositoryInterface
     return $this->model->create($data);
   }
 
-  public function destroy(int $id): bool
+  public function destroy(int $idTask): bool
   {
-    return $this->model->destroy($id) > 0;
+    return $this->model->destroy($idTask) > 0;
   }
 
-  public function show(int $id): object | null 
+  public function show(int $idTask): object | null 
   {
-    return $this->model->find($id);
+    return $this->model->find($idTask);
   }
 
-  public function update(int $id, array $data): object | null
+  public function update(int $idTask, array $data): object | null
   {
-    $task = $this->model->find($id);
+    $task = $this->model->find($idTask);
     $task->update($data);
     return $task;
   }

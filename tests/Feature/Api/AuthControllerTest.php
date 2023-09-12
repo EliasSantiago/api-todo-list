@@ -77,7 +77,7 @@ class AuthControllerTest extends TestCase
         $authenticatedResponse = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->json('GET', '/api/v1/me');
+        ])->json('GET', '/api/v1/information');
 
         $authenticatedResponse->assertStatus(200);
     }
