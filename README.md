@@ -47,3 +47,6 @@ API ToDo List.
 
 **PHP Code Analysis with Docker and PHPMD**
 - docker run -it --rm -v $(pwd):/project -w /project jakzal/phpqa phpmd app text cleancode,codesize,controversial,design,naming,unusedcode
+
+**Deploy config**
+- The deploy settings can be changed in the .github directory.
