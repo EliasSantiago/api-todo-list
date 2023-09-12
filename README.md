@@ -41,5 +41,9 @@ To interact database with sql, run...
 **Step 8: Generate tables**
 - docker-compose exec app php artisan migrate
 
+**Step 9: Generate/Update in the documentation**
+- docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider
+- docker-compose exec app php artisan l5-swagger:generate
+
 ** Documentation API **
-- http://localhost:8081/api/documentation
+- http://localhost:8000/api/documentation

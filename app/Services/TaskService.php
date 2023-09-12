@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\TaskNotFoundException;
 use App\Models\Task;
 use App\Repositories\TaskRepositoryInterface;
 
@@ -16,12 +17,19 @@ class TaskService
 
   public function index(): object
   {
-    return $this->repository->index();
+    $tasks = $this->repository->index();
+
+    if ($tasks->isEmpty()) {
+      throw new TaskNotFoundException('Nenhuma tarefa encontrada.');
+    }
+
+    return $tasks;
   }
 
   public function store(array $data): object
   {
     $data['user_id'] = auth()->id();
+    $data['status'] = 'pendente';
     return $this->repository->store($data);
   }
 
@@ -29,7 +37,7 @@ class TaskService
   {
     $task = Task::find($id);
     if (!$task) {
-      throw new \Exception("Tarefa não encontrada", 404);
+      throw new TaskNotFoundException('Nenhuma tarefa encontrada.');
     }
     return $this->repository->destroy($id);
   }
