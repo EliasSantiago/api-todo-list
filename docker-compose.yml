@@ -24,6 +24,15 @@ services:
         networks:
             - laravel
 
+    # Redis
+    redis:
+        image: redis:latest
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+        networks:
+            - laravel
+
 networks:
     laravel:
         driver: bridge
